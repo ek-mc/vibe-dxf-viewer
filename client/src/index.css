@@ -1,3 +1,9 @@
+/* =============================================================================
+   vibe-dxf-viewer — Design System: Technical Brutalism / Engineering Blueprint
+   Pitch black background. Electric cyan accent. JetBrains Mono typography.
+   Asymmetric sidebar + canvas layout. Dot-grid empty state.
+   ============================================================================= */
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -27,11 +33,6 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -43,74 +44,36 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
-}
-
-.dark {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-500);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.85 0.005 65);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.85 0.005 65);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.85 0.005 65);
-  --secondary: oklch(0.24 0.006 286.033);
-  --secondary-foreground: oklch(0.7 0.005 65);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground:  oklch(0.92 0.005 65);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.488 0.243 264.376);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.85 0.005 65);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground:  oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.488 0.243 264.376);
+  --radius: 0.15rem;
+  /* Pitch black engineering palette */
+  --background: oklch(0 0 0);
+  --foreground: oklch(0.92 0.005 200);
+  --card: oklch(0.07 0.005 240);
+  --card-foreground: oklch(0.92 0.005 200);
+  --popover: oklch(0.07 0.005 240);
+  --popover-foreground: oklch(0.92 0.005 200);
+  /* Electric cyan primary */
+  --primary: oklch(0.82 0.18 195);
+  --primary-foreground: oklch(0.05 0 0);
+  --secondary: oklch(0.1 0.008 240);
+  --secondary-foreground: oklch(0.75 0.005 200);
+  --muted: oklch(0.08 0.005 240);
+  --muted-foreground: oklch(0.52 0.01 220);
+  --accent: oklch(0.82 0.18 195);
+  --accent-foreground: oklch(0.05 0 0);
+  --destructive: oklch(0.65 0.22 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.16 0.008 240);
+  --input: oklch(0.1 0.008 240);
+  --ring: oklch(0.82 0.18 195);
+  --sidebar: oklch(0.04 0.003 240);
+  --sidebar-foreground: oklch(0.88 0.005 200);
+  --sidebar-primary: oklch(0.82 0.18 195);
+  --sidebar-primary-foreground: oklch(0.05 0 0);
+  --sidebar-accent: oklch(0.1 0.008 240);
+  --sidebar-accent-foreground: oklch(0.88 0.005 200);
+  --sidebar-border: oklch(0.16 0.008 240);
+  --sidebar-ring: oklch(0.82 0.18 195);
 }
 
 @layer base {
@@ -119,39 +82,24 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
   [type="button"]:not(:disabled),
   [type="submit"]:not(:disabled),
-  [type="reset"]:not(:disabled),
   a[href],
-  select:not(:disabled),
-  input[type="checkbox"]:not(:disabled),
-  input[type="radio"]:not(:disabled) {
+  select:not(:disabled) {
     @apply cursor-pointer;
   }
 }
 
 @layer components {
-  /**
-   * Custom container utility that centers content and adds responsive padding.
-   *
-   * This overrides Tailwind's default container behavior to:
-   * - Auto-center content (mx-auto)
-   * - Add responsive horizontal padding
-   * - Set max-width for large screens
-   *
-   * Usage: <div className="container">...</div>
-   *
-   * For custom widths, use max-w-* utilities directly:
-   * <div className="max-w-6xl mx-auto px-4">...</div>
-   */
   .container {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1rem; /* 16px - mobile padding */
+    padding-left: 1rem;
     padding-right: 1rem;
   }
 
@@ -160,18 +108,89 @@
     min-width: 0;
   }
 
-  @media (min-width: 640px) {
-    .container {
-      padding-left: 1.5rem; /* 24px - tablet padding */
-      padding-right: 1.5rem;
-    }
+  /* Engineering crosshair cursor for canvas area */
+  .canvas-cursor {
+    cursor: crosshair;
   }
 
-  @media (min-width: 1024px) {
-    .container {
-      padding-left: 2rem; /* 32px - desktop padding */
-      padding-right: 2rem;
-      max-width: 1280px; /* Standard content width */
-    }
+  /* Cyan glow effect for active elements */
+  .cyan-glow {
+    box-shadow: 0 0 8px oklch(0.82 0.18 195 / 0.4);
   }
+
+  /* Subtle dot grid background */
+  .dot-grid {
+    background-image: radial-gradient(
+      circle,
+      oklch(0.22 0.01 240) 1px,
+      transparent 1px
+    );
+    background-size: 24px 24px;
+  }
+
+  /* Toolbar button style */
+  .toolbar-btn {
+    @apply flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium
+           text-muted-foreground border border-border
+           hover:text-primary hover:border-primary/50 hover:bg-primary/5
+           transition-all duration-150;
+  }
+
+  .toolbar-btn.active {
+    @apply text-primary border-primary/60 bg-primary/10;
+  }
+
+  /* Layer row */
+  .layer-row {
+    @apply flex items-center gap-2 px-3 py-1.5 text-xs
+           hover:bg-secondary/60 transition-colors duration-100
+           border-b border-border/40 cursor-pointer select-none;
+  }
+
+  .layer-row.active {
+    @apply bg-primary/10 text-primary;
+  }
+
+  /* Status bar */
+  .status-bar {
+    @apply flex items-center gap-4 px-3 h-7 text-xs text-muted-foreground
+           border-t border-border bg-card/80;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: oklch(0.04 0.003 240);
+}
+::-webkit-scrollbar-thumb {
+  background: oklch(0.2 0.008 240);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.82 0.18 195 / 0.6);
+}
+
+/* Canvas SVG entity draw-in animation */
+@keyframes drawIn {
+  from { stroke-dashoffset: 1000; opacity: 0; }
+  to { stroke-dashoffset: 0; opacity: 1; }
+}
+
+.entity-animate {
+  stroke-dasharray: 1000;
+  animation: drawIn 0.8s ease-out forwards;
+}
+
+/* Drop zone pulse */
+@keyframes borderPulse {
+  0%, 100% { border-color: oklch(0.82 0.18 195 / 0.4); }
+  50% { border-color: oklch(0.82 0.18 195 / 0.9); box-shadow: 0 0 20px oklch(0.82 0.18 195 / 0.2); }
+}
+
+.drop-zone-active {
+  animation: borderPulse 1.2s ease-in-out infinite;
 }
