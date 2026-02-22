@@ -140,19 +140,22 @@ export function useDxfParser() {
         if (!dxf) throw new Error("Parser returned null — file may not be a valid DXF.");
 
         // Extract layers from tables
+        // The 'dxf' package uses tables.layers (not tables.layer.layers)
+        // and colorNumber (not colorIndex); negative colorNumber means layer is off
         const layerMap: Record<string, DxfLayer> = {};
-        if (dxf.tables?.layer?.layers) {
-          for (const [name, layer] of Object.entries(
-            dxf.tables.layer.layers as Record<string, { colorIndex?: number }>
-          )) {
-            layerMap[name] = {
-              name,
-              color: layer.colorIndex ?? 256,
-              colorHex: aciToHex(layer.colorIndex ?? 256),
-              visible: true,
-              entityCount: 0,
-            };
-          }
+        const rawLayers = dxf.tables?.layers ?? dxf.tables?.layer?.layers ?? {};
+        for (const [name, layer] of Object.entries(
+          rawLayers as Record<string, { colorNumber?: number; colorIndex?: number }>
+        )) {
+          const colorNum = layer.colorNumber ?? layer.colorIndex ?? 256;
+          const absColor = Math.abs(colorNum); // negative = layer off, but we still show it
+          layerMap[name] = {
+            name,
+            color: absColor,
+            colorHex: aciToHex(absColor),
+            visible: colorNum >= 0, // respect frozen/off state
+            entityCount: 0,
+          };
         }
 
         const entities: DxfEntity[] = ((dxf?.entities ?? []) as unknown[]) as DxfEntity[];
