@@ -87,7 +87,7 @@ export default function DropZone({ onFile, loading, error }: Props) {
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Upload className="w-3 h-3" />
-              <span>AutoCAD DXF format supported</span>
+              <span>DXF format supported</span>
             </div>
           </>
         )}

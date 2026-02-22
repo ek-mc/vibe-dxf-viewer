@@ -1,6 +1,6 @@
 # vibe-dxf-viewer
 
-> A browser-based AutoCAD DXF file viewer with a layer inspector — no installation, no server, no AutoCAD required.
+> A browser-based DXF file viewer with a layer inspector — no installation, no server required.
 
 ![vibe-dxf-viewer screenshot](https://files.manuscdn.com/user_upload_by_module/session_file/310519663217647812/oDYyGPQaNyPcPGMf.png)
 
@@ -10,7 +10,7 @@
 - **SVG canvas renderer** supporting LINE, LWPOLYLINE, POLYLINE, CIRCLE, ARC, SPLINE, POINT, and TEXT entities
 - **Layer inspector** sidebar with per-layer visibility toggles and entity counts
 - **Pan & zoom** — scroll to zoom, drag to pan, fit-to-view button
-- **AutoCAD Color Index (ACI)** mapping — layers render in their original DXF colors
+- **ACI color mapping** — layers render in their original DXF colors
 - **Status bar** showing entity count, layer count, and drawing dimensions
 - Pitch-black engineering aesthetic with electric cyan accents
 

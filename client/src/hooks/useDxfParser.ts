@@ -52,7 +52,7 @@ export interface DxfData {
   fileName: string;
 }
 
-/** Convert AutoCAD color index (ACI) to a hex string */
+/** Convert ACI (color index) to a hex string */
 function aciToHex(colorIndex: number): string {
   const ACI: Record<number, string> = {
     0: "#000000",

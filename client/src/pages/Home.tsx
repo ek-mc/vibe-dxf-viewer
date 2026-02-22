@@ -126,11 +126,10 @@ export default function Home() {
 
         {/* GitHub link */}
         <a
-          href="https://github.com"
+          href="https://github.com/ek-mc/vibe-dxf-viewer"
           target="_blank"
           rel="noopener noreferrer"
           className="toolbar-btn"
-          onClick={e => { e.preventDefault(); toast.info("Open the GitHub repo from your profile."); }}
           title="View on GitHub"
         >
           <Github className="w-3.5 h-3.5" />
