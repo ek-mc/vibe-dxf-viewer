@@ -217,17 +217,18 @@ export default function DxfCanvas({ dxfData, visibleLayers, layerColors }: Props
       if (!visibleLayers.has(layerName)) continue;
       const d = entityToPath(e);
       if (!d) continue;
-      const color = layerColors[layerName] ?? "#00E5FF";
+      // ACI color 7 = white on dark bg; make sure it's bright
+      let color = layerColors[layerName] ?? "#00E5FF";
+      if (color === "#FFFFFF" || color === "#000000") color = "#FFFFFF";
       result.push(
         <path
           key={`${e.type}-${i}`}
           d={d}
           stroke={color}
-          strokeWidth={1 / transform.scale}
+          strokeWidth={1.5 / transform.scale}
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
-          vectorEffect="non-scaling-stroke"
         />
       );
     }
