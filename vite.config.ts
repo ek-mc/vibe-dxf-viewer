@@ -154,7 +154,7 @@ const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(
 
 export default defineConfig({
   plugins,
-  base: process.env.GITHUB_PAGES ? "/vibe-dxf-viewer/" : "/",
+  base: "/vibe-dxf-viewer/",
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
