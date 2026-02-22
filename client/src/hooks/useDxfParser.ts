@@ -1,12 +1,12 @@
 /**
  * useDxfParser — DXF file parsing hook
- * Design: Technical Brutalism / Engineering Blueprint
- * Parses DXF files using dxf-parser and extracts entities + layers.
+ * Uses the 'dxf' npm package (parseString) which correctly handles LWPOLYLINE vertices.
+ * Field names from this library: LINE uses start/end, LWPOLYLINE uses vertices[].
  */
 
 import { useState, useCallback } from "react";
-// @ts-ignore — dxf-parser has no bundled types
-import DxfParser from "dxf-parser";
+// @ts-ignore — no bundled types
+import { parseString } from "dxf";
 
 export interface DxfLayer {
   name: string;
@@ -16,32 +16,38 @@ export interface DxfLayer {
   entityCount: number;
 }
 
+export interface DxfVertex {
+  x: number;
+  y: number;
+  z?: number;
+}
+
 export interface DxfEntity {
   type: string;
-  layer: string;
+  layer?: string;
   handle?: string | number;
-  // Line / Polyline
-  vertices?: Array<{ x: number; y: number; z?: number }>;
-  startPoint?: { x: number; y: number; z?: number };
-  endPoint?: { x: number; y: number; z?: number };
-  // Circle / Arc
-  center?: { x: number; y: number; z?: number };
+  // LINE
+  start?: DxfVertex;
+  end?: DxfVertex;
+  // LWPOLYLINE / POLYLINE
+  vertices?: DxfVertex[];
+  shape?: boolean;
+  // CIRCLE / ARC
+  center?: DxfVertex;
   radius?: number;
   startAngle?: number;
   endAngle?: number;
-  // Ellipse
-  majorAxisEndPoint?: { x: number; y: number; z?: number };
+  // ELLIPSE
+  majorAxisEndPoint?: DxfVertex;
   axisRatio?: number;
-  // Spline
-  controlPoints?: Array<{ x: number; y: number; z?: number }>;
-  // Text
+  // SPLINE
+  controlPoints?: DxfVertex[];
+  // TEXT / MTEXT
   text?: string;
-  position?: { x: number; y: number; z?: number };
-  // Point
+  position?: DxfVertex;
+  // POINT
   x?: number;
   y?: number;
-  // Insert (block reference)
-  name?: string;
 }
 
 export interface DxfData {
@@ -93,6 +99,7 @@ function computeBounds(entities: DxfEntity[]) {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
 
   const expand = (x: number, y: number) => {
+    if (!isFinite(x) || !isFinite(y)) return;
     if (x < minX) minX = x;
     if (y < minY) minY = y;
     if (x > maxX) maxX = x;
@@ -100,22 +107,16 @@ function computeBounds(entities: DxfEntity[]) {
   };
 
   for (const e of entities) {
-    if (e.vertices) {
-      for (const v of e.vertices) expand(v.x, v.y);
-    }
-    if (e.startPoint) expand(e.startPoint.x, e.startPoint.y);
-    if (e.endPoint) expand(e.endPoint.x, e.endPoint.y);
+    if (e.vertices) for (const v of e.vertices) expand(v.x, v.y);
+    if (e.start) expand(e.start.x, e.start.y);
+    if (e.end) expand(e.end.x, e.end.y);
     if (e.center && e.radius) {
       expand(e.center.x - e.radius, e.center.y - e.radius);
       expand(e.center.x + e.radius, e.center.y + e.radius);
     }
     if (e.position) expand(e.position.x, e.position.y);
-    if (e.controlPoints) {
-      for (const cp of e.controlPoints) expand(cp.x, cp.y);
-    }
-    if (typeof e.x === "number" && typeof e.y === "number") {
-      expand(e.x, e.y);
-    }
+    if (e.controlPoints) for (const cp of e.controlPoints) expand(cp.x, cp.y);
+    if (typeof e.x === "number" && typeof e.y === "number") expand(e.x, e.y);
   }
 
   if (!isFinite(minX)) { minX = 0; minY = 0; maxX = 100; maxY = 100; }
@@ -135,14 +136,15 @@ export function useDxfParser() {
     reader.onload = (e) => {
       try {
         const text = e.target?.result as string;
-        const parser = new DxfParser();
-        const dxf = parser.parseSync(text);
+        const dxf = parseString(text);
         if (!dxf) throw new Error("Parser returned null — file may not be a valid DXF.");
 
-        // Extract layers
+        // Extract layers from tables
         const layerMap: Record<string, DxfLayer> = {};
         if (dxf.tables?.layer?.layers) {
-          for (const [name, layer] of Object.entries(dxf.tables.layer.layers as Record<string, { colorIndex?: number }>)) {
+          for (const [name, layer] of Object.entries(
+            dxf.tables.layer.layers as Record<string, { colorIndex?: number }>
+          )) {
             layerMap[name] = {
               name,
               color: layer.colorIndex ?? 256,
@@ -153,10 +155,9 @@ export function useDxfParser() {
           }
         }
 
-        // Extract entities
         const entities: DxfEntity[] = ((dxf?.entities ?? []) as unknown[]) as DxfEntity[];
 
-        // Count entities per layer
+        // Count entities per layer & auto-create missing layer entries
         for (const entity of entities) {
           const layerName = entity.layer ?? "0";
           if (!layerMap[layerName]) {
@@ -182,7 +183,7 @@ export function useDxfParser() {
           fileName: file.name,
         });
       } catch (err) {
-        setError(`Failed to parse DXF file: ${(err as Error).message}`);
+        setError(`Failed to parse DXF: ${(err as Error).message}`);
       } finally {
         setLoading(false);
       }

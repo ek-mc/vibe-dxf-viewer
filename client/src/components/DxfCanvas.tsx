@@ -25,8 +25,8 @@ const PADDING = 48;
 function entityToPath(entity: DxfEntity): string | null {
   switch (entity.type) {
     case "LINE": {
-      const s = entity.startPoint;
-      const e = entity.endPoint;
+      const s = entity.start;
+      const e = entity.end;
       if (!s || !e) return null;
       return `M ${s.x} ${-s.y} L ${e.x} ${-e.y}`;
     }
