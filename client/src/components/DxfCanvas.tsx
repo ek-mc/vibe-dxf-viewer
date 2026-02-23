@@ -36,8 +36,9 @@ function entityToPath(entity: DxfEntity): string | null {
       const verts = entity.vertices;
       if (!verts || verts.length < 2) return null;
       const d = verts.map((v, i) => `${i === 0 ? "M" : "L"} ${v.x} ${-v.y}`).join(" ");
-      // Close if the entity flag says so
-      return (entity as any).shape ? d + " Z" : d;
+      // Close if the entity is marked closed (flag) or shape (older parsers)
+      const isClosed = (entity as any).closed === true || (entity as any).shape === true;
+      return isClosed ? d + " Z" : d;
     }
 
     case "CIRCLE": {
