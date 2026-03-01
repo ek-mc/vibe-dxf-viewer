@@ -11,8 +11,10 @@
 - **Layer inspector** sidebar with per-layer visibility toggles and entity counts
 - **Pan & zoom** — scroll to zoom, drag to pan, fit-to-view button
 - **ACI color mapping** — layers render in their original DXF colors
+- **Light / Dark mode toggle** with persisted preference
+- **Theme-aware contrast handling** (white/black layer colors are remapped for visibility)
 - **Status bar** showing entity count, layer count, and drawing dimensions
-- Pitch-black engineering aesthetic with electric cyan accents
+- Technical engineering aesthetic with electric cyan accents
 
 ## Tech Stack
 
