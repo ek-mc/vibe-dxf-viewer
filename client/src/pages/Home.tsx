@@ -5,15 +5,16 @@
  */
 
 import { useState, useCallback } from "react";
-import { FolderOpen, RotateCcw, Github, Layers, Info } from "lucide-react";
-import { toast } from "sonner";
+import { FolderOpen, RotateCcw, Github, Layers, Info, Sun, Moon } from "lucide-react";
 import { useDxfParser } from "@/hooks/useDxfParser";
 import DxfCanvas from "@/components/DxfCanvas";
 import LayerInspector from "@/components/LayerInspector";
 import DropZone from "@/components/DropZone";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Home() {
   const { dxfData, loading, error, parseFile, reset } = useDxfParser();
+  const { theme, toggleTheme } = useTheme();
   const [visibleLayers, setVisibleLayers] = useState<Set<string>>(new Set());
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -73,7 +74,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-black overflow-hidden select-none">
+    <div className="flex flex-col h-screen w-screen bg-background overflow-hidden select-none">
 
       {/* ── Toolbar ── */}
       <header className="flex items-center gap-0 h-12 border-b border-border bg-card/80 shrink-0 px-2">
@@ -112,6 +113,19 @@ export default function Home() {
         >
           <Layers className="w-3.5 h-3.5" />
           Layers
+        </button>
+
+        <button
+          className="toolbar-btn"
+          onClick={toggleTheme}
+          title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+        >
+          {theme === "dark" ? (
+            <Sun className="w-3.5 h-3.5" />
+          ) : (
+            <Moon className="w-3.5 h-3.5" />
+          )}
+          {theme === "dark" ? "Light" : "Dark"}
         </button>
 
         {/* Spacer */}
@@ -157,6 +171,7 @@ export default function Home() {
               dxfData={dxfData}
               visibleLayers={effectiveVisible}
               layerColors={layerColors}
+              theme={theme}
             />
           ) : (
             <DropZone onFile={handleFile} loading={loading} error={error} />
