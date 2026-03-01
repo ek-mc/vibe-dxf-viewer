@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented in this file.
 
+## [Unreleased]
+
+### Changed
+- Browser page title updated to `DFX Viewer`
+- Added SEO/social metadata in `client/index.html`:
+  - standard meta description/keywords/robots/author
+  - Open Graph tags
+  - Twitter card tags
+
 ## [1.1.0] - 2026-03-02
 
 ### Added
