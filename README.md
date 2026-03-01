@@ -67,6 +67,13 @@ Open [http://localhost:3000](http://localhost:3000) and drop any `.dxf` file ont
 | Open file | Toolbar → Open, or drag-and-drop |
 | Toggle layer | Click layer row in sidebar |
 
+## Versioning
+
+This project follows semantic versioning.
+
+- Current version: `1.1.0`
+- See [CHANGELOG.md](./CHANGELOG.md) for release notes.
+
 ## License
 
 MIT — free and open source.
