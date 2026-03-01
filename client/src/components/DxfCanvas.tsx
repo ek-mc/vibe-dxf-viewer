@@ -11,6 +11,7 @@ interface Props {
   dxfData: DxfData;
   visibleLayers: Set<string>;
   layerColors: Record<string, string>;
+  theme: "light" | "dark";
 }
 
 interface Transform {
@@ -118,7 +119,7 @@ function computeViewBox(entities: DxfEntity[], bounds: DxfData["bounds"]) {
   };
 }
 
-export default function DxfCanvas({ dxfData, visibleLayers, layerColors }: Props) {
+export default function DxfCanvas({ dxfData, visibleLayers, layerColors, theme }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [transform, setTransform] = useState<Transform>({ x: 0, y: 0, scale: 1 });
   const [isPanning, setIsPanning] = useState(false);
@@ -218,9 +219,13 @@ export default function DxfCanvas({ dxfData, visibleLayers, layerColors }: Props
       if (!visibleLayers.has(layerName)) continue;
       const d = entityToPath(e);
       if (!d) continue;
-      // ACI color 7 = white on dark bg; make sure it's bright
+      // ACI color 7 and black/white remap based on theme for readability
       let color = layerColors[layerName] ?? "#00E5FF";
-      if (color === "#FFFFFF" || color === "#000000") color = "#FFFFFF";
+      if (theme === "dark") {
+        if (color === "#000000") color = "#FFFFFF";
+      } else {
+        if (color === "#FFFFFF") color = "#111827";
+      }
       result.push(
         <path
           key={`${e.type}-${i}`}
@@ -234,12 +239,12 @@ export default function DxfCanvas({ dxfData, visibleLayers, layerColors }: Props
       );
     }
     return result;
-  }, [entities, visibleLayers, layerColors, transform.scale]);
+  }, [entities, visibleLayers, layerColors, transform.scale, theme]);
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full overflow-hidden bg-black"
+      className={`relative w-full h-full overflow-hidden ${theme === "dark" ? "bg-black" : "bg-white"}`}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}

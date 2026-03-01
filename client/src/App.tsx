@@ -9,9 +9,9 @@ import Home from "./pages/Home";
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider defaultTheme="dark" switchable>
         <TooltipProvider>
-          <Toaster theme="dark" />
+          <Toaster />
           <Router hook={useHashLocation}>
             <Switch>
               <Route path="/" component={Home} />
