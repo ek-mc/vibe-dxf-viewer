@@ -77,3 +77,8 @@ This project follows semantic versioning.
 ## License
 
 MIT — free and open source.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
