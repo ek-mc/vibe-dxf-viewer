@@ -10,6 +10,9 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+- Documented GitHub Actions workflows in README.
+
 ### Changed
 - Browser page title updated to `DFX Viewer`
 - Added SEO/social metadata in `client/index.html`:
