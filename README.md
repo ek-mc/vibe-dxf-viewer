@@ -82,3 +82,8 @@ MIT — free and open source.
 
 See [CHANGELOG.md](CHANGELOG.md).
 
+## Automation
+
+This repository uses GitHub Actions workflows:
+- `deploy.yml`
+
