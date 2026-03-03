@@ -8,7 +8,7 @@
 
 All notable changes to this project are documented in this file.
 
-## [Unreleased]
+## [0.0.1] - 2026-03-04
 
 ### Added
 - Documented GitHub Actions workflows in README.
