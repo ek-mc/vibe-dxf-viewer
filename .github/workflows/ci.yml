@@ -1,0 +1,27 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  basic-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install deps (if package.json exists)
+        run: |
+          if [ -f package.json ]; then npm install; fi
+      - name: Build (if script exists)
+        run: |
+          if [ -f package.json ]; then npm run -s build || true; fi
+      - name: JS syntax check
+        run: |
+          files=$(find . -name "*.js" -not -path "*/node_modules/*")
+          if [ -n "$files" ]; then
+            echo "$files" | while read -r f; do node --check "$f"; done
+          fi

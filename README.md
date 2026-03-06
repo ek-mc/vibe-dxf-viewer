@@ -1,5 +1,8 @@
 # vibe-dxf-viewer
 
+Live demo: https://ek-mc.github.io/vibe-dxf-viewer/
+
+
 > A browser-based DXF file viewer with a layer inspector — no installation, no server required.
 
 ![vibe-dxf-viewer screenshot](https://files.manuscdn.com/user_upload_by_module/session_file/310519663217647812/oDYyGPQaNyPcPGMf.png)
@@ -86,4 +89,3 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 This repository uses GitHub Actions workflows:
 - `deploy.yml`
-
