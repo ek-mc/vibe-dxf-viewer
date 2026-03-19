@@ -1,27 +1,70 @@
 name: CI
+
 on:
   push:
-    branches: [main]
+    branches: ["main"]
   pull_request:
-    branches: [main]
 
 jobs:
-  basic-checks:
+  ci:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - name: Install deps (if package.json exists)
+          node-version: 22
+
+      - name: Detect package manager
+        id: pm
+        shell: bash
         run: |
-          if [ -f package.json ]; then npm install; fi
-      - name: Build (if script exists)
-        run: |
-          if [ -f package.json ]; then npm run -s build || true; fi
-      - name: JS syntax check
-        run: |
-          files=$(find . -name "*.js" -not -path "*/node_modules/*")
-          if [ -n "$files" ]; then
-            echo "$files" | while read -r f; do node --check "$f"; done
+          if [ -f pnpm-lock.yaml ] || grep -q '"packageManager"[[:space:]]*:[[:space:]]*"pnpm@' package.json; then
+            echo "pm=pnpm" >> "$GITHUB_OUTPUT"
+          else
+            echo "pm=npm" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Enable Corepack (pnpm)
+        if: steps.pm.outputs.pm == 'pnpm'
+        run: corepack enable
+
+      - name: Install dependencies (pnpm)
+        if: steps.pm.outputs.pm == 'pnpm'
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          else
+            pnpm install
+          fi
+
+      - name: Install dependencies (npm)
+        if: steps.pm.outputs.pm == 'npm'
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Lint (if present)
+        run: ${{ steps.pm.outputs.pm }} run lint --if-present
+
+      - name: Type check / check (if present)
+        shell: bash
+        run: |
+          PM='${{ steps.pm.outputs.pm }}'
+          $PM run check --if-present
+          $PM run typecheck --if-present
+
+      - name: Build (if present)
+        run: ${{ steps.pm.outputs.pm }} run build --if-present
+
+      - name: Test (if present)
+        run: ${{ steps.pm.outputs.pm }} run test --if-present
+
+      - name: Pack dry-run
+        run: npm pack --dry-run
