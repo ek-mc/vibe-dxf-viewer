@@ -1,14 +1,46 @@
 # Changelog
 
-## [Unreleased]
+All notable changes to this project are documented in this file.
 
-## [0.0.0] - 2026-03-04
+## [1.2.0] - 2026-03-23
 
 ### Added
-- Added MIT `LICENSE` file.
+- **Performance / rendering**
+  - Layer-path batching to reduce SVG node count.
+  - `Fast` mode toggle for heavy drawings.
+  - Polyline sampling in fast mode for very dense geometries.
+- **CAD UX tools**
+  - Tool modes: `Pan`, `Inspect`, `Measure`.
+  - Entity inspector panel (type, layer, handle, basic metadata).
+  - 2-point distance measurement with endpoint snapping.
+  - Saved views (3 slots: save/load).
+- **Layer workflow improvements**
+  - Layer search/filter.
+  - Layer isolate action.
+  - Layer lock/unlock state.
+  - Clear isolation shortcut.
 
+### Changed
+- Toolbar extended with performance + CAD interaction controls.
+- Status bar now reflects active tool / fast-mode state.
 
-All notable changes to this project are documented in this file.
+## [1.1.0] - 2026-03-02
+
+### Added
+- Light/Dark theme toggle in the toolbar.
+- Persisted theme preference via local storage.
+- Theme-aware contrast handling in DXF canvas (black/white line remap for readability).
+
+### Documentation
+- README updated with light mode + contrast behavior.
+
+## [1.0.0] - 2026-03-02
+
+### Initial
+- Browser-based DXF viewer.
+- Layer inspector with visibility controls.
+- SVG rendering pipeline for core DXF entities.
+- Pan/zoom and fit-to-view controls.
 
 ## [0.0.1] - 2026-03-04
 
@@ -16,26 +48,13 @@ All notable changes to this project are documented in this file.
 - Documented GitHub Actions workflows in README.
 
 ### Changed
-- Browser page title updated to `DFX Viewer`
+- Browser page title updated to `DFX Viewer`.
 - Added SEO/social metadata in `client/index.html`:
   - standard meta description/keywords/robots/author
   - Open Graph tags
   - Twitter card tags
 
-## [1.1.0] - 2026-03-02
+## [0.0.0] - 2026-03-04
 
 ### Added
-- Light/Dark theme toggle in the toolbar
-- Persisted theme preference via local storage
-- Theme-aware contrast handling in DXF canvas (black/white line remap for readability)
-
-### Documentation
-- README updated with light mode + contrast behavior
-
-## [1.0.0] - 2026-03-02
-
-### Initial
-- Browser-based DXF viewer
-- Layer inspector with visibility controls
-- SVG rendering pipeline for core DXF entities
-- Pan/zoom and fit-to-view controls
+- Added MIT `LICENSE` file.
