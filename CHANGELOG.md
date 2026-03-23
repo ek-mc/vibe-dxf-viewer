@@ -42,7 +42,7 @@ All notable changes to this project are documented in this file.
 - SVG rendering pipeline for core DXF entities.
 - Pan/zoom and fit-to-view controls.
 
-## [0.0.1] - 2026-03-04
+## [0.0.1] - 2026-03-01
 
 ### Added
 - Documented GitHub Actions workflows in README.
@@ -54,7 +54,8 @@ All notable changes to this project are documented in this file.
   - Open Graph tags
   - Twitter card tags
 
-## [0.0.0] - 2026-03-04
+## [0.0.0] - 2026-02-22
 
-### Added
-- Added MIT `LICENSE` file.
+### Initial
+- Initial project bootstrap.
+- First working DXF viewer foundation (pre-release baseline).
