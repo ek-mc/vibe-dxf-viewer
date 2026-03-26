@@ -51,7 +51,14 @@ jobs:
           fi
 
       - name: Lint (if present)
-        run: ${{ steps.pm.outputs.pm }} run lint --if-present
+        shell: bash
+        run: |
+          PM='${{ steps.pm.outputs.pm }}'
+          if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.lint ? 0 : 1)"; then
+            $PM run lint
+          else
+            echo "No lint script found; skipping."
+          fi
 
       - name: Type check / check (if present)
         shell: bash
