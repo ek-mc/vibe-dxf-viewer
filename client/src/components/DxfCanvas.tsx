@@ -17,6 +17,7 @@ interface Props {
   theme: "light" | "dark";
   fastMode?: boolean;
   toolMode?: "pan" | "inspect" | "measure";
+  resetViewToken?: number;
 }
 
 interface Transform {
@@ -161,6 +162,7 @@ export default function DxfCanvas({
   theme,
   fastMode = false,
   toolMode = "pan",
+  resetViewToken = 0,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [transform, setTransform] = useState<Transform>({ x: 0, y: 0, scale: 1 });
@@ -187,6 +189,12 @@ export default function DxfCanvas({
     [vb]
   );
 
+  const fitToView = useCallback(() => {
+    setTransform(computeFit(containerSize.w, containerSize.h));
+    setSelectedEntity(null);
+    setMeasurePoints([]);
+  }, [computeFit, containerSize]);
+
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -207,6 +215,11 @@ export default function DxfCanvas({
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (resetViewToken === 0) return;
+    fitToView();
+  }, [resetViewToken, fitToView]);
 
   const onMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -248,10 +261,6 @@ export default function DxfCanvas({
       };
     });
   }, []);
-
-  const fitToView = useCallback(() => {
-    setTransform(computeFit(containerSize.w, containerSize.h));
-  }, [computeFit, containerSize]);
 
   const visibleEntityRows = useMemo(() => {
     const rows: Array<{ i: number; entity: DxfEntity; layer: string }> = [];
@@ -365,7 +374,6 @@ export default function DxfCanvas({
             );
           })}
 
-          {/* Measurement overlay */}
           {measurePoints.length > 0 && (
             <circle cx={measurePoints[0].x} cy={measurePoints[0].y} r={5 / transform.scale} fill="#22d3ee" />
           )}
@@ -386,7 +394,6 @@ export default function DxfCanvas({
         </g>
       </svg>
 
-      {/* Right controls */}
       <div className="absolute bottom-10 right-3 flex flex-col gap-1">
         <button
           className="toolbar-btn w-7 h-7 justify-center text-base"
@@ -407,23 +414,23 @@ export default function DxfCanvas({
         </button>
       </div>
 
-      {/* Top-left tool info */}
       <div className="absolute top-3 left-3 text-xs font-mono bg-card/80 border border-border px-2 py-1 text-muted-foreground">
         Mode: <span className="text-primary">{toolMode}</span>
         {fastMode ? <span className="ml-2 text-amber-400">FAST</span> : null}
       </div>
 
-      {/* Saved views */}
       <div className="absolute top-3 right-3 flex gap-1">
         {[0, 1, 2].map((slot) => (
           <div key={slot} className="flex gap-0.5">
             <button
               className="toolbar-btn h-7 px-2 text-[10px]"
-              onClick={() => setSavedViews((prev) => {
-                const n = [...prev];
-                n[slot] = { ...transform };
-                return n;
-              })}
+              onClick={() =>
+                setSavedViews((prev) => {
+                  const n = [...prev];
+                  n[slot] = { ...transform };
+                  return n;
+                })
+              }
               title={`Save view ${slot + 1}`}
             >
               S{slot + 1}
@@ -443,7 +450,6 @@ export default function DxfCanvas({
         ))}
       </div>
 
-      {/* Bottom-left status */}
       <div className="absolute bottom-10 left-3 text-xs text-muted-foreground font-mono flex items-center gap-2">
         <span>{Math.round(transform.scale * 100)}%</span>
         <span>•</span>
@@ -456,7 +462,6 @@ export default function DxfCanvas({
         ) : null}
       </div>
 
-      {/* Inspect panel */}
       {selectedEntity && (
         <div className="absolute left-3 bottom-20 w-72 bg-card border border-border p-2 text-xs font-mono">
           <div className="text-primary mb-1">Entity Inspector</div>
@@ -464,9 +469,7 @@ export default function DxfCanvas({
           <div>Type: {selectedEntity.entity.type}</div>
           <div>Layer: {selectedEntity.entity.layer ?? "0"}</div>
           <div>Handle: {String(selectedEntity.entity.handle ?? "-")}</div>
-          {selectedEntity.entity.vertices?.length ? (
-            <div>Vertices: {selectedEntity.entity.vertices.length}</div>
-          ) : null}
+          {selectedEntity.entity.vertices?.length ? <div>Vertices: {selectedEntity.entity.vertices.length}</div> : null}
           {selectedEntity.entity.radius ? <div>Radius: {selectedEntity.entity.radius.toFixed(3)}</div> : null}
           {selectedEntity.entity.text ? <div className="truncate">Text: {selectedEntity.entity.text}</div> : null}
         </div>

@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented in this file.
 
+## [1.2.1] - 2026-04-04
+
+### Added
+- Toolbar `Reset view` action to quickly fit the current drawing back into view.
+
+### Changed
+- Resetting the view now also clears active measurement points and entity inspection selection.
+
 ## [1.2.0] - 2026-03-23
 
 ### Added

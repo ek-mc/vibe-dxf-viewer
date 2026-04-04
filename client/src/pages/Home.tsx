@@ -19,6 +19,7 @@ export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [fastMode, setFastMode] = useState(false);
   const [toolMode, setToolMode] = useState<"pan" | "inspect" | "measure">("pan");
+  const [resetViewToken, setResetViewToken] = useState(0);
 
   const handleFile = useCallback(
     (file: File) => {
@@ -73,6 +74,7 @@ export default function Home() {
     setLockedLayers(new Set());
     setToolMode("pan");
     setFastMode(false);
+    setResetViewToken(0);
   }, [reset]);
 
   const layerColors: Record<string, string> = {};
@@ -95,7 +97,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen w-screen bg-background overflow-hidden select-none">
-      {/* Toolbar */}
       <header className="flex items-center gap-0 h-12 border-b border-border bg-card/80 shrink-0 px-2">
         <div className="flex items-center gap-2 px-2 mr-3">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -133,6 +134,11 @@ export default function Home() {
             <button className={`toolbar-btn ${fastMode ? "active" : ""}`} onClick={() => setFastMode((f) => !f)}>
               <Gauge className="w-3.5 h-3.5" />
               Fast
+            </button>
+
+            <button className="toolbar-btn" onClick={() => setResetViewToken((n) => n + 1)}>
+              <RotateCcw className="w-3.5 h-3.5" />
+              Reset view
             </button>
 
             <button className={`toolbar-btn ${toolMode === "pan" ? "active" : ""}`} onClick={() => setToolMode("pan")}>
@@ -204,6 +210,7 @@ export default function Home() {
               theme={theme}
               fastMode={fastMode}
               toolMode={toolMode}
+              resetViewToken={resetViewToken}
             />
           ) : (
             <DropZone onFile={handleFile} loading={loading} error={error} />
