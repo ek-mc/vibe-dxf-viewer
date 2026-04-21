@@ -1,5 +1,12 @@
 # Changelog
 
+## Upgrade Notes convention
+
+For each release entry, include an **Upgrade Notes** line:
+- `Upgrade Notes: None` if no migration/breaking changes are required
+- otherwise include concrete migration/compatibility instructions
+
+
 All notable changes to this project are documented in this file.
 
 ## [1.2.1] - 2026-04-04
