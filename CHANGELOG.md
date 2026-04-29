@@ -74,3 +74,8 @@ All notable changes to this project are documented in this file.
 ### Initial
 - Initial project bootstrap.
 - First working DXF viewer foundation (pre-release baseline).
+
+## 2026-04-29
+
+- Added basic GitHub Actions CI workflow (`.github/workflows/basic-ci.yml`).
+- Maintenance: closed stale dependency PR queue for cleaner triage (where applicable).
