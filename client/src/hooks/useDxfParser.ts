@@ -1,12 +1,17 @@
 /**
  * useDxfParser — DXF file parsing hook
- * Uses the 'dxf' npm package (parseString) which correctly handles LWPOLYLINE vertices.
- * Field names from this library: LINE uses start/end, LWPOLYLINE uses vertices[].
+ *
+ * Offloads the heavy DXF parse pipeline to a dedicated Web Worker so the
+ * main UI thread stays responsive even for large (50 MB+) drawings.
+ *
+ * Worker protocol:
+ *   → { text: string; fileName: string }
+ *   ← { type: 'result'; payload: DxfData }
+ *   ← { type: 'error';  message: string  }
  */
 
-import { useState, useCallback } from "react";
-// @ts-ignore — no bundled types
-import { parseString } from "dxf";
+import { useState, useCallback, useRef } from "react";
+import DxfWorker from "../workers/dxfParser.worker?worker";
 
 export interface DxfLayer {
   name: string;
@@ -58,138 +63,58 @@ export interface DxfData {
   fileName: string;
 }
 
-/** Convert ACI (color index) to a hex string */
-function aciToHex(colorIndex: number): string {
-  const ACI: Record<number, string> = {
-    0: "#000000",
-    1: "#FF0000",
-    2: "#FFFF00",
-    3: "#00FF00",
-    4: "#00FFFF",
-    5: "#0000FF",
-    6: "#FF00FF",
-    7: "#FFFFFF",
-    8: "#808080",
-    9: "#C0C0C0",
-    10: "#FF0000",
-    11: "#FF7F7F",
-    12: "#CC0000",
-    13: "#CC6666",
-    14: "#990000",
-    15: "#994C4C",
-    30: "#FF7F00",
-    40: "#FFBF00",
-    50: "#FFFF00",
-    60: "#7FFF00",
-    70: "#00FF00",
-    80: "#00FF7F",
-    90: "#00FFFF",
-    100: "#007FFF",
-    110: "#0000FF",
-    120: "#7F00FF",
-    130: "#FF00FF",
-    140: "#FF007F",
-    150: "#FF0040",
-    256: "#00E5FF", // BYLAYER → use cyan accent
-  };
-  return ACI[colorIndex] ?? "#00E5FF";
-}
-
-function computeBounds(entities: DxfEntity[]) {
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-
-  const expand = (x: number, y: number) => {
-    if (!isFinite(x) || !isFinite(y)) return;
-    if (x < minX) minX = x;
-    if (y < minY) minY = y;
-    if (x > maxX) maxX = x;
-    if (y > maxY) maxY = y;
-  };
-
-  for (const e of entities) {
-    if (e.vertices) for (const v of e.vertices) expand(v.x, v.y);
-    if (e.start) expand(e.start.x, e.start.y);
-    if (e.end) expand(e.end.x, e.end.y);
-    if (e.center && e.radius) {
-      expand(e.center.x - e.radius, e.center.y - e.radius);
-      expand(e.center.x + e.radius, e.center.y + e.radius);
-    }
-    if (e.position) expand(e.position.x, e.position.y);
-    if (e.controlPoints) for (const cp of e.controlPoints) expand(cp.x, cp.y);
-    if (typeof e.x === "number" && typeof e.y === "number") expand(e.x, e.y);
-  }
-
-  if (!isFinite(minX)) { minX = 0; minY = 0; maxX = 100; maxY = 100; }
-  return { minX, minY, maxX, maxY };
-}
-
 export function useDxfParser() {
   const [dxfData, setDxfData] = useState<DxfData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Keep a ref to the active worker so we can terminate it if a new file is
+  // dropped before the previous parse completes (prevents stale results).
+  const workerRef = useRef<Worker | null>(null);
+
   const parseFile = useCallback((file: File) => {
+    // Terminate any in-flight parse
+    if (workerRef.current) {
+      workerRef.current.terminate();
+      workerRef.current = null;
+    }
+
     setLoading(true);
     setError(null);
 
     const reader = new FileReader();
+
     reader.onload = (e) => {
-      try {
-        const text = e.target?.result as string;
-        const dxf = parseString(text);
-        if (!dxf) throw new Error("Parser returned null — file may not be a valid DXF.");
+      const text = e.target?.result as string;
 
-        // Extract layers from tables
-        // The 'dxf' package uses tables.layers (not tables.layer.layers)
-        // and colorNumber (not colorIndex); negative colorNumber means layer is off
-        const layerMap: Record<string, DxfLayer> = {};
-        const rawLayers = dxf.tables?.layers ?? dxf.tables?.layer?.layers ?? {};
-        for (const [name, layer] of Object.entries(
-          rawLayers as Record<string, { colorNumber?: number; colorIndex?: number }>
-        )) {
-          const colorNum = layer.colorNumber ?? layer.colorIndex ?? 256;
-          const absColor = Math.abs(colorNum); // negative = layer off, but we still show it
-          layerMap[name] = {
-            name,
-            color: absColor,
-            colorHex: aciToHex(absColor),
-            visible: colorNum >= 0, // respect frozen/off state
-            entityCount: 0,
-          };
+      const worker = new DxfWorker();
+      workerRef.current = worker;
+
+      worker.onmessage = (
+        event: MessageEvent<
+          | { type: "result"; payload: DxfData }
+          | { type: "error"; message: string }
+        >
+      ) => {
+        workerRef.current = null;
+        worker.terminate();
+
+        if (event.data.type === "result") {
+          setDxfData(event.data.payload);
+        } else {
+          setError(`Failed to parse DXF: ${event.data.message}`);
         }
-
-        const entities: DxfEntity[] = ((dxf?.entities ?? []) as unknown[]) as DxfEntity[];
-
-        // Count entities per layer & auto-create missing layer entries
-        for (const entity of entities) {
-          const layerName = entity.layer ?? "0";
-          if (!layerMap[layerName]) {
-            layerMap[layerName] = {
-              name: layerName,
-              color: 256,
-              colorHex: "#00E5FF",
-              visible: true,
-              entityCount: 0,
-            };
-          }
-          layerMap[layerName].entityCount++;
-        }
-
-        const layers = Object.values(layerMap);
-        const bounds = computeBounds(entities);
-
-        setDxfData({
-          layers,
-          entities,
-          bounds,
-          entityCount: entities.length,
-          fileName: file.name,
-        });
-      } catch (err) {
-        setError(`Failed to parse DXF: ${(err as Error).message}`);
-      } finally {
         setLoading(false);
-      }
+      };
+
+      worker.onerror = (err) => {
+        workerRef.current = null;
+        worker.terminate();
+        setError(`Worker error: ${err.message}`);
+        setLoading(false);
+      };
+
+      worker.postMessage({ text, fileName: file.name });
     };
 
     reader.onerror = () => {
@@ -201,6 +126,10 @@ export function useDxfParser() {
   }, []);
 
   const reset = useCallback(() => {
+    if (workerRef.current) {
+      workerRef.current.terminate();
+      workerRef.current = null;
+    }
     setDxfData(null);
     setError(null);
   }, []);
