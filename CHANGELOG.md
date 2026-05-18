@@ -9,6 +9,18 @@ For each release entry, include an **Upgrade Notes** line:
 
 All notable changes to this project are documented in this file.
 
+## [1.3.0] - 2026-05-18
+
+### Added
+- **Web Worker for DXF parsing** (`src/workers/dxfParser.worker.ts`). The full parse pipeline (string parsing, layer extraction, bounds computation) now runs in a dedicated worker thread, keeping the main UI thread responsive for large files (50 MB+).
+- Worker is automatically terminated if a new file is dropped before the previous parse completes, preventing stale results.
+- `reset()` in `useDxfParser` now also terminates any in-flight worker.
+
+### Changed
+- `useDxfParser` hook refactored to use the new worker via Vite's `?worker` import syntax. The public API (`parseFile`, `reset`, `dxfData`, `loading`, `error`) is unchanged.
+
+Upgrade Notes: None
+
 ## [1.2.1] - 2026-04-04
 
 ### Added
