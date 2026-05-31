@@ -440,6 +440,12 @@ export default function DxfCanvas({
   // ── Zoom-to-cursor (mouse wheel) ─────────────────────────────────────────────
   // The zoom is anchored to the exact cursor position: the world point under
   // the cursor stays fixed as the scale changes.
+  //
+  // Math: if the cursor is at screen position (cx, cy) and the current transform
+  // is (tx, ty, s), then the world point under the cursor is:
+  //   wx = (cx - tx) / s
+  // After scaling to s', the new translation must satisfy:
+  //   cx = wx * s' + tx'  →  tx' = cx - wx * s' = cx - (cx - tx) * (s'/s)
   const onWheel = useCallback(
     (e: React.WheelEvent) => {
       e.preventDefault();
