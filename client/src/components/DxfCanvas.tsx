@@ -63,11 +63,25 @@ function dist(a: Point2D, b: Point2D): number {
 
 function getEntitySnapPoints(entity: DxfEntity): Point2D[] {
   const pts: Point2D[] = [];
-  // LINE / ARC start & end
+  // LINE start & end
   if (entity.start) pts.push({ x: entity.start.x, y: -entity.start.y });
   if (entity.end)   pts.push({ x: entity.end.x,   y: -entity.end.y   });
   // CIRCLE / ARC centre
   if (entity.center) pts.push({ x: entity.center.x, y: -entity.center.y });
+  // ARC: also snap to the geometric start and end points on the arc
+  if (entity.type === "ARC" && entity.center && entity.radius) {
+    const toRad = (d: number) => (d * Math.PI) / 180;
+    const sa = toRad(entity.startAngle ?? 0);
+    const ea = toRad(entity.endAngle  ?? 0);
+    pts.push({
+      x: entity.center.x + entity.radius * Math.cos(sa),
+      y: -(entity.center.y + entity.radius * Math.sin(sa)),
+    });
+    pts.push({
+      x: entity.center.x + entity.radius * Math.cos(ea),
+      y: -(entity.center.y + entity.radius * Math.sin(ea)),
+    });
+  }
   // POLYLINE first & last vertex
   if (entity.vertices?.length) {
     pts.push({ x: entity.vertices[0].x, y: -entity.vertices[0].y });
