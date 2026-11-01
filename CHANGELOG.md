@@ -1,5 +1,16 @@
 # Changelog
 
+
+## [1.4.1] - 2026-11-01
+
+### Fixed
+- Refresh compatible dependencies and the committed pnpm lockfile.
+- Run reproducible pnpm installs and project checks in CI on Node.js 24.
+- Use the available pnpm setup action and frozen installs in Pages deployment.
+
+### Upgrade Notes
+None.
+
 ## Upgrade Notes convention
 
 For each release entry, include an **Upgrade Notes** line:

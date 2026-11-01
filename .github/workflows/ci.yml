@@ -2,98 +2,28 @@ name: CI
 
 on:
   push:
-    branches: ["main"]
+    branches: [main, master]
   pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: read
 
 jobs:
-  ci:
+  checks:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 22
-
-      - name: Detect package manager
-        id: pm
-        shell: bash
-        run: |
-          if [ -f pnpm-lock.yaml ] || grep -q '"packageManager"[[:space:]]*:[[:space:]]*"pnpm@' package.json; then
-            echo "pm=pnpm" >> "$GITHUB_OUTPUT"
-          else
-            echo "pm=npm" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Enable Corepack (pnpm)
-        if: steps.pm.outputs.pm == 'pnpm'
-        run: corepack enable
-
-      - name: Install dependencies (pnpm)
-        if: steps.pm.outputs.pm == 'pnpm'
-        run: |
-          if [ -f pnpm-lock.yaml ]; then
-            pnpm install --frozen-lockfile
-          else
-            pnpm install
-          fi
-
-      - name: Install dependencies (npm)
-        if: steps.pm.outputs.pm == 'npm'
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
-
-      - name: Lint (if present)
-        shell: bash
-        run: |
-          PM='${{ steps.pm.outputs.pm }}'
-          if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.lint ? 0 : 1)"; then
-            $PM run lint
-          else
-            echo "No lint script found; skipping."
-          fi
-
-      - name: Type check / check (if present)
-        shell: bash
-        run: |
-          PM='${{ steps.pm.outputs.pm }}'
-          if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.check ? 0 : 1)"; then
-            $PM run check
-          else
-            echo "No check script found; skipping."
-          fi
-          if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.typecheck ? 0 : 1)"; then
-            $PM run typecheck
-          else
-            echo "No typecheck script found; skipping."
-          fi
-
-      - name: Build (if present)
-        shell: bash
-        run: |
-          PM='${{ steps.pm.outputs.pm }}'
-          if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.build ? 0 : 1)"; then
-            $PM run build
-          else
-            echo "No build script found; skipping."
-          fi
-
-      - name: Test (if present)
-        shell: bash
-        run: |
-          PM='${{ steps.pm.outputs.pm }}'
-          if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.test ? 0 : 1)"; then
-            $PM run test
-          else
-            echo "No test script found; skipping."
-          fi
-
-      - name: Pack dry-run
-        run: npm pack --dry-run
+          node-version: '24'
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Check
+        run: pnpm check
+      - name: Build
+        run: pnpm build
