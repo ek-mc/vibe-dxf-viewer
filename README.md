@@ -74,7 +74,7 @@ Open [http://localhost:3000](http://localhost:3000) and drop any `.dxf` file ont
 
 This project follows semantic versioning.
 
-- Current version: `1.1.0`
+- Current version: `1.4.1`
 - See [CHANGELOG.md](./CHANGELOG.md) for release notes.
 
 ## License
