@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.4.2] - 2026-11-11
+
+### Changed
+- Host preview imagery locally and remove unnecessary external asset dependencies.
+
+### Upgrade Notes
+- None.
+
+
 
 ## [1.4.1] - 2026-11-01
 

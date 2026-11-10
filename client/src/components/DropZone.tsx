@@ -13,7 +13,7 @@ interface Props {
 }
 
 const BG_URL =
-  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663217647812/oDYyGPQaNyPcPGMf.png";
+  `${import.meta.env.BASE_URL}images/dxf-preview.png`;
 
 export default function DropZone({ onFile, loading, error }: Props) {
   const [isDragging, setIsDragging] = useState(false);
