@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.3] - 2026-11-15
+
+### Fixed
+- Normalize parsed circle centers and radii for rendering and correct drawing extents.
+
+### Added
+- Exercise the real DXF parser worker message protocol, geometry bounds, layers and empty drawings in CI.
+
+### Upgrade Notes
+- None.
+
 ## [1.4.2] - 2026-11-11
 
 ### Changed

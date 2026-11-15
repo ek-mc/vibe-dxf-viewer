@@ -126,7 +126,13 @@ function parseDxf(text: string, fileName: string): DxfData {
     };
   }
 
-  const entities: DxfEntity[] = ((dxf?.entities ?? []) as unknown[]) as DxfEntity[];
+  // dxf emits circles as x/y/r; the renderer and bounds use center/radius.
+  const entities: DxfEntity[] = (dxf?.entities ?? []).map((entity: DxfEntity & { r?: number }) => {
+    if (entity.type === "CIRCLE") {
+      return { ...entity, center: { x: entity.x!, y: entity.y! }, radius: entity.r };
+    }
+    return entity;
+  });
 
   for (const entity of entities) {
     const layerName = entity.layer ?? "0";
