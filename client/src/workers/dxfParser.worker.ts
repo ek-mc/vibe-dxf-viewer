@@ -110,7 +110,7 @@ function parseDxf(text: string, fileName: string): DxfData {
   const dxf = parseString(text);
   if (!dxf) throw new Error("Parser returned null — file may not be a valid DXF.");
 
-  const layerMap: Record<string, DxfLayer> = {};
+  const layerMap: Record<string, DxfLayer> = Object.create(null);
   const rawLayers = dxf.tables?.layers ?? dxf.tables?.layer?.layers ?? {};
   for (const [name, layer] of Object.entries(
     rawLayers as Record<string, { colorNumber?: number; colorIndex?: number }>

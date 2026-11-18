@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.4] - 2026-11-18
+
+### Fixed
+- Preserve DXF layers named `__proto__`, `constructor` or `toString` without inherited object-key collisions.
+- Align README current-version metadata with the package.
+
+### Added
+- Real-parser worker regression cases for all three reserved layer names.
+
+### Upgrade Notes
+- None.
+
 ## [1.4.3] - 2026-11-15
 
 ### Fixed
