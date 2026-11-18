@@ -36,4 +36,13 @@ describe('real DXF worker integration', () => {
     expect(result.payload.layers).toEqual([]);
     expect(result.payload.bounds).toEqual({ minX: 0, minY: 0, maxX: 100, maxY: 100 });
   });
+  it.each(['__proto__', 'constructor', 'toString'])('preserves the DXF layer named %s', (layer) => {
+    const result = parse(`0\nLINE\n8\n${layer}\n10\n0\n20\n0\n11\n2\n21\n3\n`);
+    expect(result.type).toBe('result');
+    expect(result.payload.layers).toEqual([
+      expect.objectContaining({ name: layer, entityCount: 1, visible: true }),
+    ]);
+    expect(result.payload.entities[0].layer).toBe(layer);
+  });
+
 });
