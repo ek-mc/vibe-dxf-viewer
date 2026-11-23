@@ -1,6 +1,6 @@
 {
   "name": "dxf-viewer",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "type": "module",
   "license": "MIT",
   "scripts": {
@@ -67,7 +67,6 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.3",
     "@types/express": "5.0.6",
     "@types/google.maps": "^3.66.9",

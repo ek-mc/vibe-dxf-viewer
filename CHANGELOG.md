@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.5] - 2026-11-23
+
+### Changed
+- Remove unused Tailwind typography tooling and its transitive selector parser (GHSA-rj75-hqrm-r3gf). The application does not load this plugin; the advisory concerns parsing untrusted selectors, not the DXF runtime.
+
+### Validation
+- Real DXF worker integration tests, typecheck and production build; compare browser assets with the unchanged baseline.
+
+### Upgrade Notes
+- None.
+
 ## [1.4.4] - 2026-11-18
 
 ### Fixed
